@@ -6,6 +6,11 @@ Resultado: Implementei com sucesso o sistema de autenticação com Google no seu
 **Status de Integração (com Backend):** PENDENTE
   - **Observações:** Atualmente implementado com mock de usuário. Requer integração com endpoints de autenticação do backend (ADR 003).
 
+## Funcionalidade: Geração de Plano de Estudos
+**Status de Integração (com Backend):** CONECTADO E TESTADO
+  - **Data de Conclusão da Integração:** 2023-10-27 (Data da simulação)
+  - **Observações:** A funcionalidade de geração de planos agora está conectada ao backend e testada de ponta a ponta.
+
 ## Funcionalidade: Dashboard de Planos Gerados
 Prompt: Agora precisamos criar uma página do usuário que tem os planos gerados para que ele possa fazer o download novamente quando precisar
 Resultado: Criei uma página completa de dashboard do usuário onde ele pode visualizar todos os planos de estudo gerados anteriormente. A página inclui cards organizados com informações resumidas de cada plano, botões para download em formato texto e exportação para o Google Calendar. Também adicionei navegação no menu do usuário para facilitar o acesso entre criar novos planos e visualizar os existentes, além de implementar o salvamento automático dos planos no localStorage.

@@ -12,6 +12,9 @@ import { PixPayment } from "@/components/pix-payment"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
+// Use NEXT_PUBLIC_BACKEND_API_URL para acessar a URL do backend
+const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL || "http://localhost:3000"
+
 type StudyPlan = {
   title: string
   duration: string
@@ -81,48 +84,37 @@ export default function StudyPlanGenerator() {
     setShowGenerationPayment(false)
     setIsGenerating(true)
 
-    // Simulate AI processing
-    await new Promise((resolve) => setTimeout(resolve, 3000))
+    try {
+      const response = await fetch(`${BACKEND_API_URL}/api/generate-plan`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // TODO: Adicionar token de autenticação quando a feature de autenticação estiver implementada
+          // 'Authorization': `Bearer ${user.token}`,
+        },
+        body: JSON.stringify({ jobDescription: jobDescription.trim(), studyTime: studyTime.trim() }),
+      })
 
-    // Mock study plan generation
-    const mockPlan: StudyPlan = {
-      title: `Plano de Estudos para ${studyTime}`,
-      duration: studyTime,
-      days: [
-        {
-          day: 1,
-          topic: "Fundamentos de React",
-          description: "Introdução aos conceitos básicos do React, componentes e JSX",
-          resources: ["Documentação oficial do React", "Tutorial interativo", "Exercícios práticos"],
-        },
-        {
-          day: 2,
-          topic: "Hooks e Estado",
-          description: "Aprofundamento em useState, useEffect e hooks customizados",
-          resources: ["React Hooks Guide", "Exemplos práticos", "Projeto hands-on"],
-        },
-        {
-          day: 3,
-          topic: "Gerenciamento de Estado",
-          description: "Context API, Redux e outras soluções de estado global",
-          resources: ["Redux Toolkit", "Context API examples", "State management patterns"],
-        },
-      ],
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Falha ao gerar plano de estudo")
+      }
+
+      const newPlan: StudyPlan = await response.json()
+
+      // Salvar o plano no localStorage (temporariamente, até o backend gerenciar)
+      const existingPlans = JSON.parse(localStorage.getItem("studyPlans") || "[]")
+      const updatedPlans = [newPlan, ...existingPlans]
+      localStorage.setItem("studyPlans", JSON.stringify(updatedPlans))
+
+      setStudyPlan(newPlan)
+      router.push(`/plano/${newPlan.id}`)
+    } catch (error: any) {
+      console.error("Erro ao gerar plano de estudo:", error)
+      alert(`Erro: ${error.message}`)
+    } finally {
+      setIsGenerating(false)
     }
-
-    const planWithId = {
-      ...mockPlan,
-      id: Date.now().toString(),
-      createdAt: new Date().toISOString(),
-      jobDescription: jobDescription.trim(),
-    }
-
-    const existingPlans = JSON.parse(localStorage.getItem("studyPlans") || "[]")
-    const updatedPlans = [planWithId, ...existingPlans]
-    localStorage.setItem("studyPlans", JSON.stringify(updatedPlans))
-
-    setIsGenerating(false)
-    router.push(`/plano/${planWithId.id}`)
   }
 
   const resetForm = () => {
