@@ -1,3 +1,6 @@
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+
 export default function SobrePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 py-12">
@@ -75,12 +78,13 @@ export default function SobrePage() {
 
             <div className="text-center">
               <p className="text-emerald-600 mb-4">Comece a organizar seus estudos hoje mesmo!</p>
-              <a
-                href="/"
-                className="inline-flex items-center px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
-              >
-                Criar Meu Plano
-              </a>
+              <Link href="/" passHref>
+                <Button
+                  className="inline-flex items-center px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+                >
+                  Criar Meu Plano
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

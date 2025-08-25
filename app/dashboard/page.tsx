@@ -108,40 +108,6 @@ export default function Dashboard() {
     window.location.href = "/auth/signin"
   }
 
-  const downloadPlan = (plan: StudyPlan) => {
-    const planText = `
-${plan.title}
-Duração: ${plan.duration}
-Criado em: ${new Date(plan.createdAt).toLocaleDateString("pt-BR")}
-
-Descrição da Vaga:
-${plan.jobDescription}
-
-Plano de Estudos:
-${plan.days
-  .map(
-    (day) => `
-Dia ${day.day}: ${day.topic}
-${day.description}
-
-Recursos:
-${day.resources.map((resource) => `• ${resource}`).join("\n")}
-`,
-  )
-  .join("\n")}
-    `
-
-    const blob = new Blob([planText], { type: "text/plain" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = `${plan.title.replace(/[^a-zA-Z0-9]/g, "_")}.txt`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-  }
-
   const exportPlan = () => {
     alert("Plano exportado para o Google Calendar!")
   }

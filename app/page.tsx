@@ -45,7 +45,6 @@ export default function StudyPlanGenerator() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [studyPlan, setStudyPlan] = useState<StudyPlan | null>(null)
   const [showGenerationPayment, setShowGenerationPayment] = useState(false)
-  const [generationPaid, setGenerationPaid] = useState(false)
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -109,18 +108,18 @@ export default function StudyPlanGenerator() {
 
       setStudyPlan(newPlan)
       router.push(`/plano/${newPlan.id}`)
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro ao gerar plano de estudo:", error)
-      alert(`Erro: ${error.message}`)
+      let errorMessage = "Falha ao gerar plano de estudo."
+      if (error instanceof Error) {
+        errorMessage = `Erro: ${error.message}`
+      } else if (typeof error === 'object' && error !== null && 'error' in error && typeof (error as { error: string }).error === 'string') {
+          errorMessage = `Erro: ${(error as { error: string }).error}`
+      }
+      alert(errorMessage)
     } finally {
       setIsGenerating(false)
     }
-  }
-
-  const resetForm = () => {
-    setJobDescription("")
-    setStudyTime("")
-    setStudyPlan(null)
   }
 
   if (isLoading) {
@@ -147,7 +146,6 @@ export default function StudyPlanGenerator() {
         amount={1.0}
         description="Pagamento para gerar plano de estudos com IA"
         onPaymentSuccess={() => {
-          setGenerationPaid(true)
           generateStudyPlan()
         }}
         onCancel={() => setShowGenerationPayment(false)}
